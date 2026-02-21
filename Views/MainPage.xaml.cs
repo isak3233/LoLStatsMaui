@@ -1,4 +1,5 @@
 ﻿using LoLStatsMaui.ViewModels;
+using Microsoft.Maui.Controls;
 namespace LoLStatsMaui
 {
     public partial class MainPage : ContentPage
@@ -7,7 +8,8 @@ namespace LoLStatsMaui
         public MainPage()
         {
             InitializeComponent();
-            BindingContext = new MainViewModel();
+            BindingContext = new MainViewModel(Navigation);
+
         }
 
     }

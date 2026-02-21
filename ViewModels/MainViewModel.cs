@@ -15,6 +15,8 @@ namespace LoLStatsMaui.ViewModels
 
         public Array Regions { get; }
 
+        private INavigation _navigation;
+
         [ObservableProperty]
         private string _errorMessage;
 
@@ -25,14 +27,15 @@ namespace LoLStatsMaui.ViewModels
         private Models.Region _selectedRegion;
 
 
-        public MainViewModel()
+        public MainViewModel(INavigation navigation)
         {
             SubmitCommand = new Command(OnSubmit);
             Regions = Enum.GetValues(typeof(Models.Region));
+            _navigation = navigation;
         }
         private void OnSubmit()
         {
-            if (LolName == null)
+            if (LolName == null || LolName == "")
             {
                 ErrorMessage = "Du skrev inget!";
                 return;
@@ -43,6 +46,7 @@ namespace LoLStatsMaui.ViewModels
                 return;
             }
             ErrorMessage = "";
+            _navigation.PushAsync(new Views.LolAccountOverviewPage());
 
         }
 
