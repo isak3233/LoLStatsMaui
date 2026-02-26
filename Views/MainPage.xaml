@@ -2,11 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="LoLStatsMaui.MainPage">
+             x:Class="LoLStatsMaui.MainPage"
+             BackgroundColor="#0A1428">
     <Grid RowDefinitions="Auto, *">
         <Label 
             Grid.Row="0"
             Text="LoLStats"
+            TextColor="White"
             HorizontalOptions="Center"
             VerticalOptions="Start"
             FontSize="75"
@@ -21,10 +23,8 @@
                 <Entry
                     Placeholder="Skriv något..."
                     Text="{Binding LolName}"
-                    WidthRequest="500"/>
-                <Picker
-                    ItemsSource="{Binding Regions}"
-                    SelectedItem="{Binding SelectedRegion}" />  
+                    WidthRequest="500"
+                    BackgroundColor="White"/>
 
                 <Button Text="Sök"
                     Command="{Binding SubmitCommand}" />

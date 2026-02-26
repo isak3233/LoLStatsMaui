@@ -1,19 +1,19 @@
-﻿using LoLStatsMaui.Models;
+﻿
+using CommunityToolkit.Mvvm.ComponentModel;
+using LoLStatsMaui.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LoLStatsMaui.ViewModels
 {
-    internal partial class MainViewModel : ObservableObject
+    public partial class MainViewModel : ObservableObject
     {
         public ICommand SubmitCommand { get; }
 
-        public Array Regions { get; }
 
         private INavigation _navigation;
 
@@ -23,30 +23,37 @@ namespace LoLStatsMaui.ViewModels
         [ObservableProperty]
         private string _lolName;
 
-        [ObservableProperty]
-        private Models.Region _selectedRegion;
-
 
         public MainViewModel(INavigation navigation)
         {
             SubmitCommand = new Command(OnSubmit);
-            Regions = Enum.GetValues(typeof(Models.Region));
+           
             _navigation = navigation;
         }
-        private void OnSubmit()
+        private async void OnSubmit()
         {
             if (LolName == null || LolName == "")
             {
                 ErrorMessage = "Du skrev inget!";
                 return;
             }
-            if(!LolName.Contains("#"))
+            if(!(LolName.Count(c => c == '#') == 1))
             {
-                ErrorMessage = "Det sökta kontot behöver innehålla #";
+                ErrorMessage = "Det sökta kontot måste innehålla bara ETT #";
+                return;
+            }
+            if (LolName.Split('#')[0].Length < 3)
+            {
+                ErrorMessage = "Det sökta spel namnet är mindre än 3 tecken";
+                return;
+            }
+            if (LolName.Split('#')[1].Length < 3)
+            {
+                ErrorMessage = "Det sökta spel tagen är mindre än 3 tecken";
                 return;
             }
             ErrorMessage = "";
-            _navigation.PushAsync(new Views.LolAccountOverviewPage());
+            await _navigation.PushAsync(new LolAccountOverviewPage(LolName));
 
         }
 
