@@ -49,19 +49,19 @@ namespace LoLStatsMaui.ViewModels
             }
             catch (NotFoundException e)
             {
-                ErrorMessage = "Kontot hittades inte";
+                ErrorMessage = "Kontot hittades inte, Kolla om du stavade fel.";
                 Debug.WriteLine(e);
                 return;
             }
             catch (UnauthorizedException e)
             {
-                ErrorMessage = "Otillåten API nyckel";
+                ErrorMessage = "Otillåten API nyckel, Se till att uppdatera API nyckeln";
                 Debug.WriteLine(e);
                 return;
             }
             catch (ServerException e)
             {
-                ErrorMessage = "Riots API har just nu problem";
+                ErrorMessage = "Riots API har just nu problem, Försök senare";
                 Debug.WriteLine(e);
                 return;
             }

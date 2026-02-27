@@ -6,6 +6,7 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     BackgroundColor="#0A1428">
     <VerticalStackLayout>
+        <!--  Error meddelande  -->
         <Label
             Padding="100"
             FontSize="30"
@@ -26,8 +27,10 @@
                 HorizontalOptions="Start"
                 Spacing="0">
 
-                <!--  Profilbild  -->
+                <!--  Profilbild och metadata om profilnamn  -->
                 <HorizontalStackLayout Spacing="16">
+
+                    <!--  Profilbild och level  -->
                     <Grid HorizontalOptions="Start">
                         <Image
                             Aspect="AspectFill"
@@ -53,6 +56,7 @@
                         </Border>
                     </Grid>
 
+                    <!--  Namn och region  -->
                     <VerticalStackLayout Spacing="8" VerticalOptions="Center">
                         <HorizontalStackLayout Spacing="6">
                             <Label
@@ -83,7 +87,7 @@
                     </VerticalStackLayout>
                 </HorizontalStackLayout>
 
-                <!--  Rank och matcher sida vid sida  -->
+                <!--  Rank och matcher grid  -->
                 <Grid Margin="0,20,0,0" ColumnSpacing="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
