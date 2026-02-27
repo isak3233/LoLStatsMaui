@@ -1,9 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using LoLStatsMaui.Exceptions;
 using LoLStatsMaui.Models;
+using LoLStatsMaui.Models.Requests;
 using LoLStatsMaui.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -16,10 +19,19 @@ namespace LoLStatsMaui.ViewModels
         private ILolRepository _lolRepository;
 
         [ObservableProperty]
-        private Summoner _summoner;
+        private SummonerOverview _summonerOverview;
+
+        [ObservableProperty]
+        private ObservableCollection<LolMatch> _matchList = new();
 
         [ObservableProperty]
         private ImageSource _profileImage;
+
+        [ObservableProperty]
+        private string _errorMessage;
+
+        [ObservableProperty]
+        private bool _hasError;
 
         public LolAccountOverViewModel(string lolName)
         {
@@ -33,28 +45,63 @@ namespace LoLStatsMaui.ViewModels
         {
             try
             {
-                await LoadSummoner();
-            } catch
+                await LoadSummonerOverview();
+            }
+            catch (NotFoundException e)
             {
-                Console.WriteLine("Hittade inte personen du sökte efter");
+                ErrorMessage = "Kontot hittades inte";
+                Debug.WriteLine(e);
                 return;
             }
-
-            
+            catch (UnauthorizedException e)
+            {
+                ErrorMessage = "Otillåten API nyckel";
+                Debug.WriteLine(e);
+                return;
+            }
+            catch (ServerException e)
+            {
+                ErrorMessage = "Riots API har just nu problem";
+                Debug.WriteLine(e);
+                return;
+            }
+            catch (Exception e)
+            {
+                ErrorMessage = "Något gick fel!";
+                Debug.WriteLine(e);
+                return;
+            } finally
+            {
+                HasError = true;
+            }
+            HasError = false;
             LoadImage();
+            await LoadMatches();
         }
-        private async Task LoadSummoner()
+        
+        private async Task LoadSummonerOverview()
         {
             string[] splitName = _lolName.Split('#');
             if (splitName.Length != 2) return;
             string gameName = splitName[0];
             string tagLine = splitName[1];
-            Summoner = await _lolRepository.GetSummonerAsync(gameName, tagLine);
+            SummonerOverview = await _lolRepository.GetSummonerOverviewAsync(gameName, tagLine);
 
         }
         private void LoadImage()
         {
-            ProfileImage = ImageSource.FromFile($"ProfileIcons/{Summoner.ProfileIconId}.png");
+            ProfileImage = ImageSource.FromFile($"ProfileIcons/{SummonerOverview.ProfileIconId}.png");
+        }
+        private async Task LoadMatches()
+        {
+            var request = new MatchQueryRequest
+            {
+                Uuid = SummonerOverview.Uuid,
+                Region = SummonerOverview.Region,
+                Count = 5,
+            };
+            var matches = await _lolRepository.GetLolMatchesAsync(request);
+            MatchList = new ObservableCollection<LolMatch>(matches);
         }
     }
 }

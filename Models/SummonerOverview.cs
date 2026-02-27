@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using LoLStatsMaui.Models.Dto;
 
 namespace LoLStatsMaui.Models
 {
-    public class Summoner
+    public class SummonerOverview
     {
         public string Uuid { get; set; }
         public string SummonerName { get; set; }
@@ -12,6 +13,6 @@ namespace LoLStatsMaui.Models
         public string Region { get; set; }
         public long Level { get; set; }
         public int ProfileIconId { get; set; }
-        
+        public List<RankEntry> RankEntries { get; set; }
     }
 }

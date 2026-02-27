@@ -1,62 +1,204 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="LoLStatsMaui.Views.LolAccountOverviewPage"
-             BackgroundColor="#0A1428">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.3*"/>
-            <ColumnDefinition Width="0.7*"/>
-        </Grid.ColumnDefinitions>
+<ContentPage
+    x:Class="LoLStatsMaui.Views.LolAccountOverviewPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    BackgroundColor="#0A1428">
+    <VerticalStackLayout>
+        <Label
+            Padding="100"
+            FontSize="30"
+            HorizontalTextAlignment="Center"
+            IsVisible="{Binding HasError}"
+            Text="{Binding ErrorMessage}"
+            TextColor="Red"
+            VerticalTextAlignment="Center" />
 
-        <VerticalStackLayout Grid.Column="1" HorizontalOptions="Start" Spacing="0" Margin="0,40,0,0">
+        <Grid IsVisible="{Binding HasError, Converter={toolkit:InvertedBoolConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.2*" />
+                <ColumnDefinition Width="0.7*" />
+            </Grid.ColumnDefinitions>
+            <VerticalStackLayout
+                Grid.Column="1"
+                Margin="0,40,0,0"
+                HorizontalOptions="Start"
+                Spacing="0">
 
-            <!-- Profilbild med level overlay -->
-            <Grid HorizontalOptions="Start">
-                <Image 
-                Source="{Binding ProfileImage}"
-                WidthRequest="90"
-                HeightRequest="90"
-                Aspect="AspectFill">
-                    <Image.Clip>
-                        <RoundRectangleGeometry Rect="0,0,90,90" CornerRadius="8"/>
-                    </Image.Clip>
-                </Image>
+                <!--  Profilbild  -->
+                <HorizontalStackLayout Spacing="16">
+                    <Grid HorizontalOptions="Start">
+                        <Image
+                            Aspect="AspectFill"
+                            HeightRequest="90"
+                            Source="{Binding ProfileImage}"
+                            WidthRequest="90">
+                            <Image.Clip>
+                                <RoundRectangleGeometry CornerRadius="8" Rect="0,0,90,90" />
+                            </Image.Clip>
+                        </Image>
+                        <Border
+                            Margin="0,0,0,-10"
+                            Padding="8,2"
+                            BackgroundColor="#C89B3C"
+                            HorizontalOptions="Center"
+                            StrokeShape="RoundRectangle 10"
+                            VerticalOptions="End">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="12"
+                                Text="{Binding SummonerOverview.Level}"
+                                TextColor="#1A1A2E" />
+                        </Border>
+                    </Grid>
 
-                <!-- Level badge som overlappar nederkanten -->
-                <Border 
-                BackgroundColor="#C89B3C"
-                HorizontalOptions="Center"
-                VerticalOptions="End"
-                Padding="8,2"
-                Margin="0,0,0,-10"
-                StrokeShape="RoundRectangle 10">
-                    <Label 
-                    Text="{Binding Summoner.Level}"
-                    TextColor="#1A1A2E"
-                    FontSize="12"
-                    FontAttributes="Bold"/>
-                </Border>
-            </Grid>
+                    <VerticalStackLayout Spacing="8" VerticalOptions="Center">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="22"
+                                Text="{Binding SummonerOverview.SummonerName}"
+                                TextColor="White" />
+                            <Label
+                                Margin="0,0,0,3"
+                                FontSize="14"
+                                Text="{Binding SummonerOverview.TagLine, StringFormat='#{0}'}"
+                                TextColor="#8A8A9A"
+                                VerticalOptions="End" />
+                        </HorizontalStackLayout>
+                        <Border
+                            Padding="10,4"
+                            BackgroundColor="#1E3A5F"
+                            HorizontalOptions="Start"
+                            Stroke="#2A5080"
+                            StrokeShape="RoundRectangle 6"
+                            StrokeThickness="1">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                Text="{Binding SummonerOverview.Region}"
+                                TextColor="#5B9BD5" />
+                        </Border>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
 
-            <!-- Namn och tag -->
-            <HorizontalStackLayout Spacing="6" Margin="0,18,0,0">
-                <Label 
-                Text="{Binding Summoner.SummonerName}"
-                TextColor="White"
-                FontSize="22"
-                FontAttributes="Bold"/>
-                <Label 
-                Text="{Binding Summoner.TagLine, StringFormat='#{0}'}"
-                TextColor="#8A8A9A"
-                FontSize="14"
-                VerticalOptions="End"
-                Margin="0,0,0,3"/>
-            </HorizontalStackLayout>
+                <!--  Rank och matcher sida vid sida  -->
+                <Grid Margin="0,20,0,0" ColumnSpacing="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-        </VerticalStackLayout>
-    </Grid>
+                    <!--  Rank kort  -->
+                    <HorizontalStackLayout Grid.Column="0">
+                        <CollectionView HorizontalOptions="Start" ItemsSource="{Binding SummonerOverview.RankEntries}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        Margin="0,0,0,12"
+                                        Padding="20"
+                                        BackgroundColor="#0F1C2E"
+                                        Stroke="#1E3A5F"
+                                        StrokeShape="RoundRectangle 12"
+                                        StrokeThickness="1"
+                                        WidthRequest="320">
+                                        <VerticalStackLayout Spacing="10">
+                                            <Label
+                                                FontSize="11"
+                                                Text="{Binding QueueType}"
+                                                TextColor="#8A8A9A" />
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Image
+                                                    Grid.Column="0"
+                                                    Margin="0,0,12,0"
+                                                    HeightRequest="50"
+                                                    Source="{Binding ImageString}"
+                                                    WidthRequest="50" />
+                                                <VerticalStackLayout
+                                                    Grid.Column="1"
+                                                    Spacing="4"
+                                                    VerticalOptions="Center">
+                                                    <HorizontalStackLayout Spacing="6">
+                                                        <Label
+                                                            FontAttributes="Bold"
+                                                            FontSize="18"
+                                                            Text="{Binding Tier}"
+                                                            TextColor="#C89B3C" />
+                                                        <Label
+                                                            FontAttributes="Bold"
+                                                            FontSize="18"
+                                                            Text="{Binding Rank}"
+                                                            TextColor="#C89B3C" />
+                                                    </HorizontalStackLayout>
+                                                    <Label
+                                                        FontSize="14"
+                                                        Text="{Binding LeaguePoints, StringFormat='{0} LP'}"
+                                                        TextColor="White" />
+                                                </VerticalStackLayout>
+                                                <VerticalStackLayout
+                                                    Grid.Column="2"
+                                                    Spacing="4"
+                                                    VerticalOptions="Center">
+                                                    <HorizontalStackLayout Spacing="8">
+                                                        <Label
+                                                            FontSize="13"
+                                                            Text="{Binding Wins, StringFormat='{0}W'}"
+                                                            TextColor="#4CAF50" />
+                                                        <Label
+                                                            FontSize="13"
+                                                            Text="{Binding Losses, StringFormat='{0}L'}"
+                                                            TextColor="#F44336" />
+                                                    </HorizontalStackLayout>
+                                                    <Label
+                                                        FontSize="13"
+                                                        Text="{Binding WinRate, StringFormat='{0}% Winrate'}"
+                                                        TextColor="White" />
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </HorizontalStackLayout>
 
+                    <!--  Match kort  -->
+                    <VerticalStackLayout Grid.Column="1">
+                        <CollectionView
+                            ItemsSource="{Binding MatchList}"
+                            VerticalOptions="Start"
+                            WidthRequest="1000">
 
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        Margin="0,0,0,8"
+                                        Padding="16,10"
+                                        BackgroundColor="{Binding Win, Converter={toolkit:BoolToObjectConverter TrueObject='#0F2A4A', FalseObject='#2A0F0F'}}"
+                                        HorizontalOptions="Start"
+                                        Stroke="{Binding Win, Converter={toolkit:BoolToObjectConverter TrueObject='#1E3A5F', FalseObject='#5F1E1E'}}"
+                                        StrokeShape="RoundRectangle 10"
+                                        StrokeThickness="1">
+
+                                        <Label
+                                            FontAttributes="Bold"
+                                            FontSize="14"
+                                            Text="{Binding Win, Converter={toolkit:BoolToObjectConverter TrueObject='Victory', FalseObject='Defeat'}}"
+                                            TextColor="{Binding Win, Converter={toolkit:BoolToObjectConverter TrueObject='#5B9BD5', FalseObject='#F44336'}}" />
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
+                </Grid>
+            </VerticalStackLayout>
+        </Grid>
+    </VerticalStackLayout>
 </ContentPage>

@@ -42,9 +42,9 @@ namespace LoLStatsMaui.ViewModels
                 ErrorMessage = "Det sökta kontot måste innehålla bara ETT #";
                 return;
             }
-            if (LolName.Split('#')[0].Length < 3)
+            if (LolName.Split('#')[0].Length < 4)
             {
-                ErrorMessage = "Det sökta spel namnet är mindre än 3 tecken";
+                ErrorMessage = "Det sökta spel namnet är mindre än 4 tecken";
                 return;
             }
             if (LolName.Split('#')[1].Length < 3)
